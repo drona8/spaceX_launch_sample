@@ -1,21 +1,19 @@
 class Launch {
   String id;
   String launchName;
-  DateTime? launchDate;
+  String launchDate;
 
   Launch({
     required this.id,
     required this.launchName,
-    this.launchDate,
+    required this.launchDate,
   });
 
   factory Launch.fromJson(Map<String, dynamic> json) {
     return Launch(
       id: json['id'] ?? json['id'].toString(),
       launchName: json['mission_name'] ?? json['mission_name'].toString(),
-      launchDate: json['launch_date_local'] != null
-          ? DateTime.parse(json['launch_date_local'].toString())
-          : null,
+      launchDate: json['launch_date_local'] ?? json['launch_date_local'],
     );
   }
 
@@ -23,7 +21,7 @@ class Launch {
     final Map<String, dynamic> data = {};
     data['id'] = id;
     data['mission_name'] = launchName;
-    data['launch_date_local'] = launchDate; //need to work
+    data['launch_date_local'] = launchDate;
     return data;
   }
 }

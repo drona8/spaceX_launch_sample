@@ -1,4 +1,5 @@
 import 'package:graphql/client.dart';
+import 'package:sampleapp/graphql/launch_query.dart';
 
 class ClientUtility {
   static const String spaceXEndPoint = 'https://api.spacex.land/graphql/';
@@ -14,26 +15,24 @@ class ClientUtility {
     );
   }
 
+  static QueryOptions getQueryOptionWithId(String id) {
+    final QueryOptions options = QueryOptions(
+      document: gql(
+        LaunchQuery.getLaunches,
+      ),
+      variables: {
+        "launchId": id,
+      },
+    );
+    return options;
+  }
+
   static QueryOptions getQueryOption() {
     final QueryOptions options = QueryOptions(
-        document: gql(
-      r'''
-        query  {
-          launches {
-            id
-            mission_name
-            mission_id
-            rocket {
-              rocket_name
-            }
-            launch_site {
-              site_name
-            }
-            launch_date_local
-          }
-        }
-      ''',
-    ));
+      document: gql(
+        LaunchQuery.getAllLaunches,
+      ),
+    );
     return options;
   }
 }
