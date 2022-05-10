@@ -10,7 +10,17 @@ class Api {
   static Future<Launch> getLaunchById(String id) async {
     final GraphQLClient _client = ClientUtility.getGithubGraphQLClient();
     final QueryResult _result =
-        await _client.query(ClientUtility.getQueryOptionWithId(id));
+        await _client.query(ClientUtility.getQueryOptionWithId(id, 'launch'));
+    if (_result.hasException) {
+      debugPrint('Got Some Exception ${_result.exception.toString()}');
+    }
+    return Launch.fromJson(_result.data!['launch']);
+  }
+
+  static Future<Launch> getLaunchDetailsById(String id) async {
+    final GraphQLClient _client = ClientUtility.getGithubGraphQLClient();
+    final QueryResult _result = await _client
+        .query(ClientUtility.getQueryOptionWithId(id, 'launch_details'));
     if (_result.hasException) {
       debugPrint('Got Some Exception ${_result.exception.toString()}');
     }

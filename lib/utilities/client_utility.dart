@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:graphql/client.dart';
 import 'package:sampleapp/graphql/launch_query.dart';
 
@@ -15,10 +16,10 @@ class ClientUtility {
     );
   }
 
-  static QueryOptions getQueryOptionWithId(String id) {
+  static QueryOptions getQueryOptionWithId(String id, String label) {
     final QueryOptions options = QueryOptions(
       document: gql(
-        LaunchQuery.getLaunches,
+        _getGQL(label),
       ),
       variables: {
         "launchId": id,
@@ -27,12 +28,15 @@ class ClientUtility {
     return options;
   }
 
-  static QueryOptions getQueryOption() {
-    final QueryOptions options = QueryOptions(
-      document: gql(
-        LaunchQuery.getAllLaunches,
-      ),
-    );
-    return options;
+  static String _getGQL(String label) {
+    switch (label) {
+      case 'launch':
+        return LaunchQuery.getLaunches;
+      case 'launch_details':
+        debugPrint('RETURNNNNN');
+        return LaunchQuery.getLauncheDetails;
+      default:
+        return LaunchQuery.getLaunches;
+    }
   }
 }

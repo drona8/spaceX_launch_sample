@@ -7,7 +7,9 @@ import 'package:sampleapp/widgets/text_widget.dart';
 import '../models/launch.dart';
 import '../style/styles.dart';
 import '../utilities/app_constants.dart';
+import '../utilities/app_slide_route.dart';
 import '../widgets/spacex_button.dart';
+import 'details_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -20,7 +22,9 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isDisabled = true;
   bool _shouldApiBeCalled = false;
   bool _shouldShowResult = false;
+  bool _shouldMakeCall = false;
   late TextEditingController _searchController;
+  String? _searchText;
   late FocusNode _focus;
 
   @override
@@ -34,8 +38,11 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onFocusChange() {
     if (_focus.hasFocus) {
       setState(() {
-        _shouldApiBeCalled = false;
+        _shouldMakeCall = false;
       });
+      /*setState(() {
+        _shouldApiBeCalled = false;
+      });*/
     }
   }
 
@@ -85,35 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _getResultRow(String label, String data) {
-    return SizedBox(
-      height: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.3,
-            child: Text(
-              label,
-              style: hintStyleblacktextPSB(),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.05,
-          ),
-          Expanded(child: Text(data)),
-        ],
-      ),
-    );
-  }
-
   void onChanged(String value) {
-    setState(() {
-      _shouldShowResult = false;
-      _shouldApiBeCalled = false;
-    });
     if (value.isEmpty) {
       setState(() {
         _isDisabled = true;
@@ -127,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _getResultBuilder(BuildContext context) {
     return FutureBuilder<Launch>(
-      future: Api.getLaunchById(_searchController.text),
+      future: _shouldMakeCall ? Api.getLaunchById(_searchText!) : null,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -149,23 +128,57 @@ class _SearchScreenState extends State<SearchScreen> {
               Launch _launch = snapshot.data!;
               return Column(
                 children: [
-                  _getResultRow(
+                  CommonWidget.getResultRow(
+                    context,
                     'Launch ID:',
                     _launch.id,
                   ),
-                  _getResultRow(
+                  CommonWidget.getResultRow(
+                    context,
                     'Launch Name:',
                     _launch.launchName,
                   ),
-                  _getResultRow(
+                  CommonWidget.getResultRow(
+                    context,
                     'Launch Date:',
                     AppUtility.formateDate(_launch.launchDate),
+                  ),
+                  Flexible(
+                    child: CommonWidget.getSizedBoxWithChild(
+                      MediaQuery.of(context).size.width * 0.5,
+                      50,
+                      _getSpaceXButtonForDetailsScreen(),
+                    ),
                   ),
                 ],
               );
             }
         }
       },
+    );
+  }
+
+  Widget _getSpaceXButtonForDetailsScreen() {
+    return SpaceXButton(
+      child: _getInnerChildOfSpaceXButtonForDetailsScreen(),
+      onPressed: () {
+        Navigator.push(
+          context,
+          AppSlideRightRoute(
+            page: DetailsScreen(
+              id: _searchText!,
+            ),
+          ),
+        );
+      },
+      isDisabled: false,
+    );
+  }
+
+  Widget _getInnerChildOfSpaceXButtonForDetailsScreen() {
+    return Text(
+      AppConstant.gotoDetails,
+      style: hintStylewhitetextPSB(),
     );
   }
 
@@ -191,7 +204,9 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     if (double.tryParse(_searchController.text) != null) {
       setState(() {
+        _searchText = _searchController.text;
         _shouldApiBeCalled = true;
+        _shouldMakeCall = true;
       });
     } else {
       setState(() {
