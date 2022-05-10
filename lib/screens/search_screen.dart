@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sampleapp/services/api.dart';
+import 'package:sampleapp/utilities/app_utility.dart';
 import 'package:sampleapp/widgets/common_widget.dart';
 import 'package:sampleapp/widgets/text_widget.dart';
 
@@ -20,16 +21,28 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _shouldApiBeCalled = false;
   bool _shouldShowResult = false;
   late TextEditingController _searchController;
+  late FocusNode _focus;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _focus = FocusNode();
+    _focus.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (_focus.hasFocus) {
+      setState(() {
+        _shouldApiBeCalled = false;
+      });
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -50,6 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintText: 'Launch ID',
                 onChangedFunction: onChanged,
                 controller: _searchController,
+                focusNode: _focus,
               ),
               CommonWidget.getVariableHeightSizedBox(20),
               CommonWidget.getSizedBoxWithChild(
@@ -135,9 +149,18 @@ class _SearchScreenState extends State<SearchScreen> {
               Launch _launch = snapshot.data!;
               return Column(
                 children: [
-                  _getResultRow('Launch ID:', _launch.id),
-                  _getResultRow('Launch Name:', _launch.launchName),
-                  _getResultRow('Launch Date:', _launch.launchDate),
+                  _getResultRow(
+                    'Launch ID:',
+                    _launch.id,
+                  ),
+                  _getResultRow(
+                    'Launch Name:',
+                    _launch.launchName,
+                  ),
+                  _getResultRow(
+                    'Launch Date:',
+                    AppUtility.formateDate(_launch.launchDate),
+                  ),
                 ],
               );
             }
@@ -162,6 +185,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onPressed() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _shouldShowResult = false;
     });

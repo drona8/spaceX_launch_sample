@@ -5,13 +5,15 @@ class TextWidget extends StatefulWidget {
   final String hintText;
   final Function(String)? onChangedFunction;
   final TextEditingController controller;
+  final FocusNode focusNode;
 
-  const TextWidget(
-      {Key? key,
-      required this.hintText,
-      required this.onChangedFunction,
-      required this.controller})
-      : super(key: key);
+  const TextWidget({
+    Key? key,
+    required this.hintText,
+    required this.onChangedFunction,
+    required this.controller,
+    required this.focusNode,
+  }) : super(key: key);
 
   @override
   State<TextWidget> createState() => _TextWidgetState();
@@ -25,6 +27,7 @@ class _TextWidgetState extends State<TextWidget> {
       margin: const EdgeInsets.only(top: 15.0),
       child: TextFormField(
         controller: widget.controller,
+        focusNode: widget.focusNode,
         decoration: InputDecoration(
           labelText: widget.hintText,
           alignLabelWithHint: true,

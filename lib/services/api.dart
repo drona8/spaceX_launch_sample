@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/rendering.dart';
 import 'package:graphql/client.dart';
 import 'package:sampleapp/models/launch.dart';
 
@@ -11,9 +12,7 @@ class Api {
     final QueryResult _result =
         await _client.query(ClientUtility.getQueryOptionWithId(id));
     if (_result.hasException) {
-      print('Got Some Exception');
-      print(_result.exception.toString());
-      exit(2);
+      debugPrint('Got Some Exception ${_result.exception.toString()}');
     }
     return Launch.fromJson(_result.data!['launch']);
   }
