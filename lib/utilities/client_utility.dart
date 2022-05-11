@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:graphql/client.dart';
 import 'package:sampleapp/graphql/launch_query.dart';
 
@@ -33,7 +32,6 @@ class ClientUtility {
       case 'launch':
         return LaunchQuery.getLaunches;
       case 'launch_details':
-        debugPrint('RETURNNNNN');
         return LaunchQuery.getLauncheDetails;
       default:
         return LaunchQuery.getLaunches;

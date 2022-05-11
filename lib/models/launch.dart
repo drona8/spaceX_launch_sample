@@ -1,14 +1,19 @@
+import 'package:sampleapp/models/ship.dart';
+
 class Launch {
   String id;
   String launchName;
   String launchDate;
   List<String>? rocketFirstStageCoreStatus;
+  List<Ship>? ships;
 
-  Launch(
-      {required this.id,
-      required this.launchName,
-      required this.launchDate,
-      this.rocketFirstStageCoreStatus});
+  Launch({
+    required this.id,
+    required this.launchName,
+    required this.launchDate,
+    this.rocketFirstStageCoreStatus,
+    this.ships,
+  });
 
   factory Launch.fromJson(Map<String, dynamic> json) {
     return Launch(
@@ -17,7 +22,15 @@ class Launch {
       launchDate: json['launch_date_local'] ?? json['launch_date_local'],
       rocketFirstStageCoreStatus:
           _getRocketFirstStageCoreStatus(json['rocket'] ?? json['rocket']),
+      ships: json['ships'] != null ? _getShips(json['ships']) : null,
     );
+  }
+
+  static List<Ship> _getShips(dynamic jsonShip) {
+    return List<dynamic>.from(jsonShip).map((ship) {
+      Ship s = Ship.fromJson(ship);
+      return s;
+    }).toList();
   }
 
   static List<String>? _getRocketFirstStageCoreStatus(
@@ -26,8 +39,14 @@ class Launch {
     if (json != null) {
       if (json['first_stage'] != null) {
         if (json['first_stage']['cores'] != null) {
-          List<dynamic> _cores = json['first_stage']['cores'] as List<dynamic>;
-          _list = List.from(json['first_stage']['cores']);
+          _list = [];
+          for (dynamic dyn in List.from(json['first_stage']['cores'])) {
+            if (dyn['core'] != null) {
+              if (dyn['core']['status'] != null) {
+                _list.add(dyn['core']['status']);
+              }
+            }
+          }
         }
       }
     }

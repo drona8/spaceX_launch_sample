@@ -51,3 +51,14 @@ TextStyle hintStyleblacktextPSB() {
     fontFamily: 'PoppinsSemiBold',
   );
 }
+
+TextStyle listTileTitleStyle() {
+  return const TextStyle(
+    fontSize: 14.0,
+    fontFamily: "PoppinsMedium",
+    fontStyle: FontStyle.normal,
+    color: Colors.black,
+    letterSpacing: 0.6,
+    fontWeight: FontWeight.w400,
+  );
+}

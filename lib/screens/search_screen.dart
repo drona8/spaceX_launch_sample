@@ -110,15 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  color: orange,
-                ),
-              ),
-            );
+            return CommonWidget.circularProgressIndicator();
           default:
             if (snapshot.hasError) {
               return const Text(AppConstant.invalidInputError);
