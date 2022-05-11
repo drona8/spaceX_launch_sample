@@ -1,17 +1,18 @@
+import 'package:sampleapp/models/rocket.dart';
 import 'package:sampleapp/models/ship.dart';
 
 class Launch {
   String id;
   String launchName;
   String launchDate;
-  List<String>? rocketFirstStageCoreStatus;
+  Rocket? rocket;
   List<Ship>? ships;
 
   Launch({
     required this.id,
     required this.launchName,
     required this.launchDate,
-    this.rocketFirstStageCoreStatus,
+    this.rocket,
     this.ships,
   });
 
@@ -20,8 +21,7 @@ class Launch {
       id: json['id'] ?? json['id'].toString(),
       launchName: json['mission_name'] ?? json['mission_name'].toString(),
       launchDate: json['launch_date_local'] ?? json['launch_date_local'],
-      rocketFirstStageCoreStatus:
-          _getRocketFirstStageCoreStatus(json['rocket'] ?? json['rocket']),
+      rocket: json['rocket'] != null ? _getRocket(json['rocket']) : null,
       ships: json['ships'] != null ? _getShips(json['ships']) : null,
     );
   }
@@ -33,23 +33,7 @@ class Launch {
     }).toList();
   }
 
-  static List<String>? _getRocketFirstStageCoreStatus(
-      Map<String, dynamic>? json) {
-    List<String>? _list;
-    if (json != null) {
-      if (json['first_stage'] != null) {
-        if (json['first_stage']['cores'] != null) {
-          _list = [];
-          for (dynamic dyn in List.from(json['first_stage']['cores'])) {
-            if (dyn['core'] != null) {
-              if (dyn['core']['status'] != null) {
-                _list.add(dyn['core']['status']);
-              }
-            }
-          }
-        }
-      }
-    }
-    return _list;
+  static Rocket _getRocket(dynamic jsonRocket) {
+    return Rocket.fromJson(jsonRocket);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sampleapp/widgets/app_tile.dart';
 
 import '../models/launch.dart';
+import '../models/rocket.dart';
 import '../models/ship.dart';
 import '../services/api.dart';
 import '../style/styles.dart';
@@ -57,6 +58,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
+        CommonWidget.getVariableHeightSizedBox(10),
         CommonWidget.getResultRow(
           context,
           'Launch ID:',
@@ -72,11 +74,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
           'Launch Date:',
           AppUtility.formateDate(launch.launchDate),
         ),
-        CommonWidget.getResultRowList(
+        CommonWidget.getVariableHeightSizedBox(20),
+        CommonWidget.getResultRow(
           context,
-          'Rocket Status:',
-          launch.rocketFirstStageCoreStatus,
+          'Rocket Details',
+          launch.rocket == null ? 'N/A' : '',
         ),
+        CommonWidget.getVariableHeightSizedBox(10),
+        launch.rocket != null
+            ? _getRocketDetails(launch.rocket!)
+            : const SizedBox.shrink(),
+        CommonWidget.getVariableHeightSizedBox(20),
         CommonWidget.getResultRow(
           context,
           'Ship Details',
@@ -85,6 +93,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               ? 'N/A'
               : '',
         ),
+        CommonWidget.getVariableHeightSizedBox(10),
         launch.ships != null && launch.ships!.isNotEmpty
             ? _getShipItems(context, launch.ships!)
             : const SizedBox.shrink()
@@ -100,5 +109,65 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   Widget _getShipItem(BuildContext context, Ship ship) {
     return AppTile(ship: ship);
+  }
+
+  Widget _getRocketDetails(Rocket rocket) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 5,
+      shadowColor: const Color.fromRGBO(105, 105, 105, 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            CommonWidget.getResultRow(
+              context,
+              'ID',
+              rocket.rocketId == null ? 'N/A' : rocket.rocketId!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Name',
+              rocket.rocketName == null ? 'N/A' : rocket.rocketName!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Type',
+              rocket.rocketType == null ? 'N/A' : rocket.rocketType!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Company',
+              rocket.company == null ? 'N/A' : rocket.company!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Country',
+              rocket.country == null ? 'N/A' : rocket.country!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Type',
+              rocket.engineType == null ? 'N/A' : rocket.engineType!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Layout',
+              rocket.engineLayout == null ? 'N/A' : rocket.engineLayout!,
+            ),
+            CommonWidget.getResultRow(
+              context,
+              'Cost/Launch',
+              rocket.costPerLaunch == null
+                  ? 'N/A'
+                  : rocket.costPerLaunch!.toString(),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

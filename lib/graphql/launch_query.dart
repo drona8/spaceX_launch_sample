@@ -33,12 +33,18 @@ class LaunchQuery {
                   mission_name
                   launch_date_local
                   rocket {
-                    first_stage {
-                      cores {
-                          core {
-                            status
-                        }
+                    rocket_name
+                    rocket_type
+                    rocket {
+                      company
+                      cost_per_launch
+                      country
+                      engines {
+                        type
+                        layout
                       }
+                      id
+                      name
                     }
                   }
                   ships {
